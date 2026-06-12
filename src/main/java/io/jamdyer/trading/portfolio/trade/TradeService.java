@@ -7,15 +7,17 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class TradeService {
 
-    @Autowired
-    private TradeRepository tradeRepository;
+    private final TradeRepository tradeRepository;
+
+    TradeService(TradeRepository tradeRepository) {
+        this.tradeRepository = tradeRepository;
+    }
 
     public List<Trade> getAllTrades() {
         List<Trade> trades = new ArrayList<>();

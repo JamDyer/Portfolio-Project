@@ -2,7 +2,6 @@ package io.jamdyer.trading.portfolio.trade;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +14,11 @@ import jakarta.validation.Valid;
 public class TradeController {
 
         
-    @Autowired
-    private TradeService tradeService;
+    private final TradeService tradeService;
+
+    TradeController(TradeService tradeService) {
+        this.tradeService = tradeService;
+    }
 
     @RequestMapping("/trades")
     public List<Trade> getAllTrades() {
