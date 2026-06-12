@@ -3,14 +3,16 @@ package io.jamdyer.trading.portfolio.portfolio;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PortfolioService {
 
-    @Autowired
-    private PortfolioRepository portfolioRepository;
+    private final PortfolioRepository portfolioRepository;
+
+    PortfolioService(PortfolioRepository portfolioRepository) {
+        this.portfolioRepository = portfolioRepository;
+    }
 
     public List<Portfolio> getAllPortfolios() {
         List<Portfolio> portfolios = new ArrayList<>();

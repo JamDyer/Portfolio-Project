@@ -5,7 +5,6 @@ import io.jamdyer.trading.portfolio.trade.TradeService;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RestController
 public class PortfolioController {
 
-    @Autowired
-    private PortfolioService portfolioService;
+    private final PortfolioService portfolioService;
 
-    @Autowired
-    private TradeService tradeService;
+    private final TradeService tradeService;
+
+    PortfolioController(PortfolioService portfolioService, TradeService tradeService) {
+        this.portfolioService = portfolioService;
+        this.tradeService = tradeService;
+    }
 
     @RequestMapping("/portfolios")
     public List<Portfolio> getAllPortfolios() {
