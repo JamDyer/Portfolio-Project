@@ -21,10 +21,9 @@ public class PortfolioService {
     }
 
     public Portfolio getPortfolioById(Long id) {
-        return portfolioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found"));
+        return portfolioRepository.findById(id).orElseThrow(() -> new RuntimeException("Portfolio not found"));
     }
-    
+
     public Portfolio createPortfolio(Portfolio portfolio) {
         portfolio.setCreatedOn(java.time.LocalDateTime.now());
         return portfolioRepository.save(portfolio);
