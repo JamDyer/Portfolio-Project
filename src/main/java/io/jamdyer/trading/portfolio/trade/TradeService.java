@@ -30,6 +30,10 @@ public class TradeService {
                 .orElseThrow(() -> new RuntimeException("Trade not found"));
     }
 
+    public List<Trade> getTradesByPortfolioId(long portfolioId) {
+        return tradeRepository.findByPortfolioId(portfolioId);
+    }
+
     public Trade createTrade(Trade trade) {
         trade.setCreatedOn(java.time.LocalDateTime.now());
         return tradeRepository.save(trade);

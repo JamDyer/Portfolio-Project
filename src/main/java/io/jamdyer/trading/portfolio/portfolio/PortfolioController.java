@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 
 @RestController
+@RequestMapping("/portfolios")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
@@ -24,32 +28,32 @@ public class PortfolioController {
         this.tradeService = tradeService;
     }
 
-    @RequestMapping("/portfolios")
+    @GetMapping
     public List<Portfolio> getAllPortfolios() {
         return portfolioService.getAllPortfolios();
     }
 
-    @RequestMapping("/portfolios/{id}")
+    @RequestMapping("/{id}")
     public Portfolio getPortfolioById(@PathVariable Long id) {
         return portfolioService.getPortfolioById(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/portfolios")
+    @PostMapping
     public Portfolio addPortfolio(@RequestBody Portfolio portfolio) {
         return portfolioService.createPortfolio(portfolio);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/portfolios/{id}")
+    @PutMapping("/{id}")
     public void updatePortfolio(@RequestBody Portfolio portfolio, @PathVariable Long id) {
         portfolioService.updatePortfolio(id, portfolio);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/portfolios/{id}")
+    @DeleteMapping("/{id}")
     public void deletePortfolio(@PathVariable Long id) {
         portfolioService.deletePortfolio(id);
     }
 
-    @RequestMapping("/portfolios/{id}/positions")
+    @RequestMapping("/{id}/positions")
     public List<Position> getPositions(@PathVariable Long id) {
         return tradeService.getPositions(id);
     }
