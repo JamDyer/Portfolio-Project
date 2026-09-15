@@ -30,7 +30,7 @@ public class PortfolioController {
     }
 
     @RequestMapping("/portfolios/{id}")
-    public Portfolio getPortfolioById(@PathVariable Long id) {
+    public Portfolio getPortfolioById(@PathVariable Integer id) {
         return portfolioService.getPortfolioById(id);
     }
 
@@ -40,17 +40,17 @@ public class PortfolioController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/portfolios/{id}")
-    public void updatePortfolio(@RequestBody Portfolio portfolio, @PathVariable Long id) {
+    public void updatePortfolio(@RequestBody Portfolio portfolio, @PathVariable Integer id) {
         portfolioService.updatePortfolio(id, portfolio);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/portfolios/{id}")
-    public void deletePortfolio(@PathVariable Long id) {
+    public void deletePortfolio(@PathVariable Integer id) {
         portfolioService.deletePortfolio(id);
     }
 
     @RequestMapping("/portfolios/{id}/positions")
-    public List<Position> getPositions(@PathVariable Long id) {
+    public List<Position> getPositions(@PathVariable Integer id) {
         return tradeService.getPositions(id);
     }
        

@@ -32,7 +32,7 @@ public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.NONE)
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     private Portfolio portfolio;

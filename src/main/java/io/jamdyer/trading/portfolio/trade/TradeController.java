@@ -26,7 +26,7 @@ public class TradeController {
     }
 
     @RequestMapping("/trades/{id}")
-    public Trade getTradeById(@PathVariable Long id) {
+    public Trade getTradeById(@PathVariable Integer id) {
         return tradeService.getTradeById(id);
     }
 
@@ -36,12 +36,12 @@ public class TradeController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/trades/{id}")
-    public void updateTrade(@RequestBody Trade trade, @PathVariable Long id) {
+    public void updateTrade(@RequestBody Trade trade, @PathVariable Integer id) {
         tradeService.updateTrade(id, trade);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/trades/{id}")
-    public void deleteTrade(@PathVariable Long id) {
+    public void deleteTrade(@PathVariable Integer id) {
         tradeService.deleteTrade(id);
     }
 
