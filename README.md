@@ -1,220 +1,83 @@
 # Trading Portfolio API
 
-A Java Spring Boot backend application for managing investment portfolios and trades.
-
-This project provides a RESTful API that allows users to create portfolios, record buy and sell trades, and calculate current portfolio positions based on historical trading activity.
-
-The application is designed to demonstrate backend engineering concepts including layered architecture, data persistence, domain modelling, validation and business logic implementation using modern Java and Spring Boot.
-
-## Project Status
-
-Active Development
-
-Current functionality includes portfolio management, trade management, position aggregation, data validation and PostgreSQL persistence.
-
-Planned enhancements include Docker containerisation, cloud deployment, portfolio valuation calculations, automated testing and event-driven processing.
-
-
-##                                          ----------------------  Features  ----------------------
-
-
-### Portfolio Management
-
-* Create portfolios
-* Retrieve portfolios
-* Update portfolio details
-* Delete portfolios
-
-### Trade Management
-
-* Create trades
-* Retrieve trades
-* Update trades
-* Delete trades
-* Associate trades with portfolios
-
-### Position Aggregation
-
-The API calculates current positions dynamically based on trade history.
-
-Example:
-
-Trades:
-
-BUY 100 AAPL
-
-BUY 50 AAPL
-
-SELL 20 AAPL
-
-Result:
-
-AAPL = 130 shares
-
-This is to demonstrate business logic beyond standard CRUD operations.
-
-### Validation
-
-Input validation is implemented using Jakarta Validation:
-
-* Required fields enforced
-* Positive quantity validation
-* Positive price validation
-
-### Persistence
-
-Data is persisted using Spring Data JPA and PostgreSQL.
-
-##                                       ----------------------  Technology Stack  ----------------------
-
-### Backend
-
-* Java 17
-* Spring Boot
-* Spring Data JPA
-* Hibernate
-
-### Database
-
-* PostgreSQL
-
-### Build Tool
-
-* Maven
-
-### Supporting Libraries
-
-* Lombok
-* Jakarta Validation
-
-##                                        ----------------------  Architecture  ----------------------
-
-The application intends to follow a layered architecture similar to what is used in enterprise backend systems.
-
-### Controller Layer
-
-Responsible for:
-
-* Handling HTTP requests
-* Validating incoming data
-* Returning API responses
-
-### Service Layer
-
-Responsible for:
-
-* Business logic
-* Position calculations
-* Data transformation
-* Application workflows
-
-### Repository Layer
-
-Responsible for:
-
-* Database access
-* Query generation via Spring Data JPA
-* Persistence operations
-
-### Domain Layer
-
-Contains:
-
-* Portfolio entity
-* Trade entity
-* Position DTO
-
-##                                        ----------------------  Domain Model  ----------------------
-
-### Portfolio
-
-Represents an investment portfolio.
-
-Fields:
-
-* id
-* name
-* userId
-* createdOn
-
-### Trade
-
-Represents a buy or sell transaction.
-
-Fields:
-
-* id
-* portfolio
-* symbol
-* quantity
-* price
-* side
-* createdOn
-
-### Position
-
-Represents an aggregated holding calculated from trade history.
-
-Fields:
-
-* symbol
-* quantity
-
-Positions are derived dynamically and are not stored in the database.
-
-##                                     ----------------------  Example API End Points  ----------------------
-
-### Portfolios
-
-GET
-
-/api/portfolios
-
-POST
-
-/api/portfolios
-
-GET
-
-/api/portfolios/{id}
-
-PUT
-
-/api/portfolios/{id}
-
-DELETE
-
-/api/portfolios/{id}
-
-### Trades
-
-GET
-
-/api/trades
-
-POST
-
-/api/trades
-
-GET
-
-/api/trades/{id}
-
-PUT
-
-/api/trades/{id}
-
-DELETE
-
-/api/trades/{id}
-
-### Positions
-
-GET
-
-/api/portfolios/{id}/positions
-
-Example response:
+A REST API for managing user-owned investment portfolios and recording trades. Built with Java 17 and Spring Boot, the application persists portfolio and trade data with JPA and PostgreSQL, and derives each portfolio's net positions from its trade history.
+
+The project demonstrates a layered Spring application, authenticated resource access, relational persistence, request validation, and domain-level aggregation. It is an active development project; it does not currently provide market data or portfolio valuation.
+
+## Features
+
+- **Portfolio management:** Create, list, retrieve, update, and delete portfolios.
+- **Trade management:** Record, list, retrieve, update, and delete BUY and SELL trades associated with a portfolio.
+- **Position aggregation:** Calculate net quantity by symbol from the selected portfolio's trades. BUY quantities are added and SELL quantities are subtracted; positions are calculated on request rather than stored separately.
+- **User accounts and access control:** Persist users, encode passwords with BCrypt, and protect portfolio and trade endpoints with Spring Security. Portfolio and trade queries are scoped to the authenticated user.
+- **Request validation:** Trade creation rejects blank symbols and non-positive quantities or prices.
+- **Persistence and local deployment:** Use PostgreSQL for application data. Docker Compose starts the API and database together, with a named volume for database data.
+
+## Technology
+
+| Area | Technologies |
+| --- | --- |
+| Language and framework | Java 17, Spring Boot 3.5.15 |
+| Web and security | Spring Web MVC, Spring Security |
+| Persistence | Spring Data JPA, Hibernate, PostgreSQL |
+| Build and tests | Maven, JUnit 5, Spring Boot Test |
+| Other dependencies | Jakarta Validation, Lombok, H2 (runtime), Spring Data Redis |
+
+Spring Data Redis is currently a dependency only; the application does not yet use Redis-backed caching or session storage.
+
+## API
+
+All application endpoints require authentication under the current security configuration. Spring Security provides form login and HTTP Basic authentication. Users created through the user endpoint receive the `basic` authority; the admin sample endpoint requires the `admin` authority.
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/portfolios` | List portfolios owned by the signed-in user |
+| `POST` | `/portfolios` | Create a portfolio |
+| `GET` | `/portfolios/{id}` | Get an owned portfolio |
+| `PUT` | `/portfolios/{id}` | Update an owned portfolio's name |
+| `DELETE` | `/portfolios/{id}` | Delete an owned portfolio |
+| `GET` | `/portfolios/{id}/positions` | Calculate net positions for an owned portfolio |
+| `GET` | `/trades` | List trades belonging to the signed-in user's portfolios |
+| `POST` | `/trades` | Create a trade in an owned portfolio |
+| `GET` | `/trades/{id}` | Get a trade belonging to the signed-in user |
+| `PUT` | `/trades/{id}` | Update an owned trade's symbol, quantity, price, or side |
+| `DELETE` | `/trades/{id}` | Delete an owned trade |
+| `POST` | `/users/create` | Create a user with the `basic` authority |
+| `GET` | `/users/home` | Basic-authority example endpoint |
+| `GET` | `/users/basic` | Basic-authority example endpoint |
+| `GET` | `/users/admin` | Admin-authority example endpoint |
+
+`/users/create` accepts `username` and `password` request parameters. It is not public registration: the current security configuration requires authentication for application endpoints other than `/login`. User provisioning for a fresh deployment is not automated.
+
+### Example requests
+
+Create a portfolio:
+
+```http
+POST /portfolios
+Content-Type: application/json
+
+{
+  "name": "Long-term investments"
+}
+```
+
+Create a trade by including the ID of an existing portfolio owned by the authenticated user:
+
+```http
+POST /trades
+Content-Type: application/json
+
+{
+  "portfolio": { "id": 1 },
+  "symbol": "AAPL",
+  "quantity": 100,
+  "price": 185.50,
+  "side": "BUY"
+}
+```
+
+Get positions with `GET /portfolios/1/positions`:
 
 ```json
 [
@@ -229,40 +92,61 @@ Example response:
 ]
 ```
 
-## Key Concepts Demonstrated
+For example, buying 100 AAPL shares, buying 50 more, then selling 20 produces a net position of 130 shares. The API reports quantities only; it does not calculate current market value or enforce that a sell is covered by prior buys.
 
-* Object-Oriented Programming
-* REST API Development
-* Spring Dependency Injection
-* JPA Entity Relationships
-* Repository Pattern
-* Service Layer Design
-* Data Validation
-* Business Logic Aggregation
-* PostgreSQL Integration
-* Domain Modelling
+## Architecture
 
-## Future Enhancements
+The application separates HTTP handling, business operations, persistence, and domain data:
 
-Planned improvements include:
+- **Controllers** expose portfolio, trade, and user endpoints.
+- **Services** implement CRUD workflows, ownership checks, account creation, and position aggregation.
+- **Repositories** use Spring Data JPA to access PostgreSQL-backed entities.
+- **Domain model** includes `User`, `Portfolio`, and `Trade` entities, plus a `Position` response model derived from trades.
 
-* Docker containerisation
-* Google Cloud deployment
-* Portfolio valuation calculations
-* Market price integration
-* Automated testing with JUnit
-* CI/CD pipelines
-* Event-driven processing
-* Redis caching
-* Asynchronous trade processing
+## Run Locally
 
-## Running the Application
+### Docker Compose
 
-- Clone the repository
-- Navigate to the project
-- Run the application
-- The API will be available on
+With Docker and the Compose plugin installed, start PostgreSQL and the API from the repository root:
 
-## Learning Objectives
+```powershell
+docker compose up --build
+```
 
-This project is being developed as part of a transition into backend and distributed systems engineering, with a focus on Java, cloud-native development and scalable service design.
+The API listens on `http://localhost:8080`; PostgreSQL is exposed on port `5432`. Compose uses development credentials from `docker-compose.yml` and persists database files in the `postgres-data` volume. Do not reuse the sample credentials in a deployed environment.
+
+Stop the containers with `Ctrl+C`, or run `docker compose down`. The named database volume is retained when stopping the stack.
+
+### Run the application with a local PostgreSQL database
+
+1. Install Java 17 and ensure PostgreSQL is running.
+2. Configure the connection settings in `src/main/resources/application-local.properties` for your local database.
+3. From the repository root, run:
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
+```
+
+The API is available at `http://localhost:8080`.
+
+## Build and Test
+
+Run the test suite with the Maven wrapper:
+
+```powershell
+.\mvnw.cmd test
+```
+
+Or on macOS/Linux:
+
+```bash
+./mvnw test
+```
+
+The current automated test is a Spring application-context smoke test. Endpoint-level and business-logic test coverage remains an area for further development.
+
+## Current Scope
+
+Implemented: user accounts and authorization, portfolio and trade CRUD, ownership checks, trade validation, PostgreSQL persistence, and position aggregation.
+
+Not currently implemented: market-price integration, portfolio valuation, public sign-up, Redis-backed features, cloud deployment, asynchronous/event-driven processing, and CI/CD automation.
